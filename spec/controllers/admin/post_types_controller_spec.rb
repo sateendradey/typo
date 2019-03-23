@@ -20,7 +20,7 @@ describe Admin::PostTypesController do
     PostType.should_receive(:find).with(:all).and_return([])
     PostType.should_receive(:new).and_return(pt)
     pt.should_receive(:save!).and_return(true)
-    post :edit, 'post_type' => { :name => "new post type" }
+    post :edit, 'categories' => { :name => "new post type" }
     assert_response :redirect
     assert_redirected_to :action => 'index'
   end

@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Admin::CategoriesController do
   render_views
-
   before(:each) do
     Factory(:blog)
     #TODO Delete after removing fixtures
@@ -11,9 +10,31 @@ describe Admin::CategoriesController do
     request.session = { :user => henri.id }
   end
 
-  it "test_index" do
+  it "index shoudld redirect to new" do
     get :index
-    assert_response :redirect, :action => 'index'
+    assert_response :redirect, :action => 'new'
+  end
+  
+  it "test_create" do
+    cat = Factory(:category)
+    Category.should_receive(:find).with(:all).and_return([])
+    Category.should_receive(:new).and_return(cat)
+    cat.should_receive(:save!).and_return(true)
+    post :edit, 'categories' => { :name => "CatName", :keywords => "CatCat", :permalink =>"CattyLink", :description => "Lots of Cats" }
+    assert_response :redirect
+    assert_redirected_to :action => 'new'
+    expect(flash[:notice]).to eq ("Category was successfully saved.")
+  end
+  
+  describe "test_new" do
+    before(:each) do
+      get :new
+    end
+
+    it 'should render template new' do
+      assert_template 'new'
+    end
+
   end
 
   describe "test_edit" do
